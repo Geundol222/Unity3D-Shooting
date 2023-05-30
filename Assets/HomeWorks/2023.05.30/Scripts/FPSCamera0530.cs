@@ -25,8 +25,8 @@ public class FPSCamera0530 : MonoBehaviour
 
     private void Look()
     {
-        xRotation = lookDelta.y * cameraSensitivity * Time.deltaTime;
-        yRotation = lookDelta.x * cameraSensitivity * Time.deltaTime;
+        yRotation += lookDelta.x * cameraSensitivity * Time.deltaTime;
+        xRotation -= lookDelta.y * cameraSensitivity * Time.deltaTime;
         xRotation = Mathf.Clamp(xRotation, -80f, 80f);
 
         cameraRoot.localRotation = Quaternion.Euler(xRotation, 0, 0);
