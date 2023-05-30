@@ -25,7 +25,12 @@ public class PlayerMover : MonoBehaviour
 
     private void Move()
     {
-        controller.Move(moveDir * moveSpeed * Time.deltaTime);
+        // 월드 기준 움직임
+        // controller.Move(moveDir * moveSpeed * Time.deltaTime);
+
+        // 로컬기준 움직임
+        controller.Move(transform.forward * moveDir.z * moveSpeed * Time.deltaTime);
+        controller.Move(transform.right * moveDir.x * moveSpeed * Time.deltaTime);
     }
 
     private void OnMove(InputValue value)
