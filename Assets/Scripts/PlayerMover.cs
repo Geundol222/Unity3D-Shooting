@@ -44,7 +44,7 @@ public class PlayerMover : MonoBehaviour
         ySpeed += Physics.gravity.y * Time.deltaTime;
 
         if (GroundCheck() && ySpeed < 0)
-            ySpeed = 0f;
+            ySpeed = -1f;
 
         controller.Move(Vector3.up * ySpeed * Time.deltaTime);
     }
