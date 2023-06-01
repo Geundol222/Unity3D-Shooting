@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Pool;
 
 public class Gun : MonoBehaviour
 {
@@ -47,7 +48,6 @@ public class Gun : MonoBehaviour
 
             yield return null;
         }
-
 
         Destroy(trail.gameObject);
     }
