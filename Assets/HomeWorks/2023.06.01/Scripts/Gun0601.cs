@@ -17,6 +17,7 @@ public class Gun0601 : MonoBehaviour
     public void Fire()
     {
         muzzleEffect.Play();
+        pool.Fire();
 
         pool.Fire();
 
