@@ -4,15 +4,10 @@ using UnityEngine;
 
 public class WeaponHolder0601 : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    [SerializeField] Gun0601 gun;
 
-    // Update is called once per frame
-    void Update()
+    public void Fire()
     {
-        
+        gun.Fire();
     }
 }

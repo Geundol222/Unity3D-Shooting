@@ -1,8 +1,10 @@
+using DesignPattern;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
 using UnityEngine.InputSystem;
+using UnityEngine.Pool;
 
 public class PlayerShooter0601 : MonoBehaviour
 {
@@ -47,7 +49,6 @@ public class PlayerShooter0601 : MonoBehaviour
     {
         if (isReloading)
             return;
-
         Fire();
     }
 }

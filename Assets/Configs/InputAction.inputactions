@@ -52,7 +52,7 @@
                 },
                 {
                     "name": "Walk",
-                    "type": "Button",
+                    "type": "PassThrough",
                     "id": "60bf6a51-189b-4f57-9812-877a64a987bf",
                     "expectedControlType": "Button",
                     "processors": "",
