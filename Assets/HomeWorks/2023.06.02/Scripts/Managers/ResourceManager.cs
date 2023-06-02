@@ -28,18 +28,67 @@ namespace HomeWork0602
                 return Object.Instantiate(original, position, rotation, parent);
         }
 
+        public T Instantiate<T>(T original, Vector3 position, Quaternion rotation, bool polling = false) where T : Object
+        {
+            return Instantiate<T>(original, position, rotation, null, polling);
+        }
+
+        public new T Instantiate<T>(T original, Transform parent, bool pooling = false) where T : Object
+        {
+            return Instantiate<T>(original, Vector3.zero, Quaternion.identity, parent, pooling);
+        }
+
+        public T Instantiate<T>(T original, bool polling = false) where T : Object
+        {
+            return Instantiate<T>(original, Vector3.zero, Quaternion.identity, null, polling);
+        }
+
         public T Instantiate<T>(string path, Vector3 position, Quaternion rotation, Transform parent, bool pooling = false) where T : Object
         {
             T original = Load<T>(path);
             return Instantiate<T>(original, position, rotation, parent, pooling);
         }
 
-        public void Destroy(GameObject obj)
+        public T Instantiate<T>(string path, Vector3 position, Quaternion rotation, bool polling = false) where T : Object
         {
-            if (GameManager.Pool.Release(obj))
-                return;
+            return Instantiate<T>(path, position, rotation, null, polling);
+        }
 
-            GameObject.Destroy(obj);
+        public T Instantiate<T>(string path, Transform parent, bool pooling = false) where T : Object
+        {
+            return Instantiate<T>(path, Vector3.zero, Quaternion.identity, parent, pooling);
+        }
+
+        public T Instantiate<T>(string path, bool pooling = false) where T : Object
+        {
+            return Instantiate<T>(path, Vector3.zero, Quaternion.identity, null, pooling);
+        }
+
+        public void Destroy(GameObject go)
+        {
+            if (GameManager.Pool.IsContain(go))
+                GameManager.Pool.Release(go);
+            else
+                GameObject.Destroy(go);
+        }
+
+        public void Destroy(GameObject go, float delay)
+        {
+            if (GameManager.Pool.IsContain(go))
+                StartCoroutine(DelayReleaseRoutine(go, delay));
+            else
+                GameObject.Destroy(go, delay);
+        }
+
+        IEnumerator DelayReleaseRoutine(GameObject go, float delay)
+        {
+            yield return new WaitForSeconds(delay);
+            GameManager.Pool.Release(go);
+        }
+
+        public void Destroy(Component component, float delay = 0f)
+        {
+            Component.Destroy(component, delay);
         }
     }
 }

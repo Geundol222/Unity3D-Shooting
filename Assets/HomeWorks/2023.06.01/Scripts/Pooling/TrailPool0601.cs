@@ -21,7 +21,7 @@ public class TrailPool0601 : MonoBehaviour
         }
         else
         {
-            StartCoroutine(TrailRoutine(muzzleEffect.transform.position, Camera.main.transform.forward * maxDistance));
+            StartCoroutine(TrailRoutine(muzzleEffect.transform.position, hit.point));
             Debug.Log(Camera.main.transform.forward);
         }
     }

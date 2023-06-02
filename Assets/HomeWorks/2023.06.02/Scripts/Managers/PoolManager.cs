@@ -50,6 +50,21 @@ namespace HomeWork0602
             }
         }
 
+        public T Get<T>(T original, Vector3 position, Quaternion rotation) where T : Object
+        {
+            return Get<T>(original, position, rotation, null);
+        }
+
+        public T Get<T>(T original, Transform parent) where T : Object
+        {
+            return Get<T>(original, Vector3.zero, Quaternion.identity, parent);
+        }
+
+        public T Get<T>(T original) where T : Object
+        {
+            return Get<T>(original, Vector3.zero, Quaternion.identity, null);
+        }
+
         public bool Release<T>(T instance) where T : Object
         {
             if (instance is GameObject)
@@ -74,6 +89,35 @@ namespace HomeWork0602
                 poolDic[key].Release(component.gameObject);
                 return true;
 
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public bool IsContain<T>(T original) where T : Object
+        {
+            if (original is GameObject)
+            {
+                GameObject prefab = original as GameObject;
+                string key = prefab.name;
+
+                if (poolDic.ContainsKey(key))
+                    return true;
+                else
+                    return false;
+
+            }
+            else if (original is Component)
+            {
+                Component component = original as Component;
+                string key = component.gameObject.name;
+
+                if (poolDic.ContainsKey(key))
+                    return true;
+                else
+                    return false;
             }
             else
             {
