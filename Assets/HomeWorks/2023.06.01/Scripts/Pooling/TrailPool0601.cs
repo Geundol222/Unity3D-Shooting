@@ -5,25 +5,24 @@ using UnityEngine;
 public class TrailPool0601 : MonoBehaviour
 {
     [SerializeField] float bulletSpeed;
-    [SerializeField] Transform muzzleEffect;
 
     private ObjectPooler0601 objectPool;
-    private Gun0601 gun;
 
     private void Awake()
     {
         objectPool = GetComponent<ObjectPooler0601>();
     }
 
-    public void Fire(RaycastHit hit, float maxDistance)
+    public void Fire(ParticleSystem muzzleEffect, RaycastHit hit, float maxDistance)
     {
         if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, maxDistance))
         {
-            StartCoroutine(TrailRoutine(muzzleEffect.position, hit.point));
+            StartCoroutine(TrailRoutine(muzzleEffect.transform.position, hit.point));
         }
         else
         {
             StartCoroutine(TrailRoutine(muzzleEffect.transform.position, Camera.main.transform.forward * maxDistance));
+            Debug.Log(Camera.main.transform.forward);
         }
     }
 

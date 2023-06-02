@@ -20,9 +20,10 @@ public class Gun : MonoBehaviour
         if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, maxDistance))
         {
             IHittable hittable = hit.transform.GetComponent<IHittable>();
-            ParticleSystem effect = Instantiate(hitEffect, hit.point, Quaternion.LookRotation(hit.normal));
+            // ParticleSystem effect = Instantiate(hitEffect, hit.point, Quaternion.LookRotation(hit.normal));
+            ParticleSystem effect = GameManager.Pool.Get(hitEffect, hit.point, Quaternion.LookRotation(hit.normal));
             effect.transform.parent = hit.transform;
-            Destroy(effect.gameObject, 3f);
+            StartCoroutine(ReleaseRoutine(effect));
 
             StartCoroutine(TrailRoutine(muzzleEffect.transform.position, hit.point));
 
@@ -34,9 +35,17 @@ public class Gun : MonoBehaviour
         }
     }
 
+    IEnumerator ReleaseRoutine(ParticleSystem effect)
+    {
+        yield return new WaitForSeconds(3f);
+        GameManager.Pool.Release(effect.gameObject);
+    }
+
     IEnumerator TrailRoutine(Vector3 startPoint, Vector3 endPoint)
     {
-        TrailRenderer trail = Instantiate(bulletTrail, muzzleEffect.transform.position, Quaternion.identity);
+        // TrailRenderer trail = Instantiate(bulletTrail, startPoint, Quaternion.identity);
+        TrailRenderer trail = GameManager.Pool.Get(bulletTrail, startPoint, Quaternion.identity);
+        trail.Clear();
 
         float totalTime = Vector2.Distance(startPoint, endPoint) / bulletSpeed;
 
@@ -49,6 +58,18 @@ public class Gun : MonoBehaviour
             yield return null;
         }
 
-        Destroy(trail.gameObject);
+        // Destroy(trail.gameObject, 3f);
+        GameManager.Pool.Release(trail.gameObject);
+
+        yield return null;
+
+        if (!trail.IsValid())
+        {
+            Debug.Log("트레일이 없다.");
+        }
+        else
+        {
+            Debug.Log("트레일이 있다.");
+        }
     }
 }

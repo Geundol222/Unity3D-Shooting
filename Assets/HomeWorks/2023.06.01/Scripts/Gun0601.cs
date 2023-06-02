@@ -21,13 +21,13 @@ public class Gun0601 : MonoBehaviour
         {
             IHittable hittable = hit.transform.GetComponent<IHittable>();
 
-            pool.Fire(hit, maxDistance);
+            pool.Fire(muzzleEffect, hit, maxDistance);
 
             hittable?.Hit(hit, damage);
         }
         else
         {
-            pool.Fire(hit, maxDistance);
+            pool.Fire(muzzleEffect, hit, maxDistance);
         }
     }
 }
