@@ -15,17 +15,15 @@ public class TrailPool0601 : MonoBehaviour
         objectPool = GetComponent<ObjectPooler0601>();
     }
 
-    public void Fire()
+    public void Fire(RaycastHit hit, float maxDistance)
     {
-        RaycastHit hit = gun.Hit;
-
-        if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, gun.MaxDistance))
+        if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, maxDistance))
         {
-            StartCoroutine(TrailRoutine(muzzleEffect.position, gun.Hit.point));
+            StartCoroutine(TrailRoutine(muzzleEffect.position, hit.point));
         }
         else
         {
-            StartCoroutine(TrailRoutine(muzzleEffect.transform.position, Camera.main.transform.forward * gun.MaxDistance));
+            StartCoroutine(TrailRoutine(muzzleEffect.transform.position, Camera.main.transform.forward * maxDistance));
         }
     }
 

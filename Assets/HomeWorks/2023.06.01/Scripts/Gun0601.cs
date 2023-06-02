@@ -10,22 +10,24 @@ public class Gun0601 : MonoBehaviour
     [SerializeField] float maxDistance;
     [SerializeField] int damage;
 
-    RaycastHit hit;
-    public float MaxDistance { get { return maxDistance; } }
-    public RaycastHit Hit { get { return hit; } }
 
     public void Fire()
     {
+        RaycastHit hit;
+
         muzzleEffect.Play();
-        pool.Fire();
-
-        pool.Fire();
-
+        
         if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, maxDistance))
         {
             IHittable hittable = hit.transform.GetComponent<IHittable>();
 
+            pool.Fire(hit, maxDistance);
+
             hittable?.Hit(hit, damage);
+        }
+        else
+        {
+            pool.Fire(hit, maxDistance);
         }
     }
 }
