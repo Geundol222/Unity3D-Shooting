@@ -5,9 +5,7 @@ using UnityEngine.Pool;
 
 public class Gun : MonoBehaviour
 {
-    [SerializeField] ParticleSystem hitEffect;
     [SerializeField] ParticleSystem muzzleEffect;
-    [SerializeField] TrailRenderer bulletTrail;
     [SerializeField] float bulletSpeed;
     [SerializeField] float maxDistance;
     [SerializeField] int damage;
@@ -21,7 +19,7 @@ public class Gun : MonoBehaviour
         {
             IHittable hittable = hit.transform.GetComponent<IHittable>();
             // ParticleSystem effect = Instantiate(hitEffect, hit.point, Quaternion.LookRotation(hit.normal));
-            ParticleSystem effect = GameManager.Resource.Instantiate(hitEffect, hit.point, Quaternion.LookRotation(hit.normal), true);
+            ParticleSystem effect = GameManager.Resource.Instantiate<ParticleSystem>("Prefabs/HitEffect", hit.point, Quaternion.LookRotation(hit.normal), true);
             effect.transform.parent = hit.transform;
             StartCoroutine(ReleaseRoutine(effect));
 
@@ -44,7 +42,7 @@ public class Gun : MonoBehaviour
     IEnumerator TrailRoutine(Vector3 startPoint, Vector3 endPoint)
     {
         // TrailRenderer trail = Instantiate(bulletTrail, startPoint, Quaternion.identity);
-        TrailRenderer trail = GameManager.Resource.Instantiate(bulletTrail, startPoint, Quaternion.identity, true);
+        TrailRenderer trail = GameManager.Resource.Instantiate<TrailRenderer>("Prefabs/BulletTrail", startPoint, Quaternion.identity, true);
         trail.Clear();
 
         float totalTime = Vector2.Distance(startPoint, endPoint) / bulletSpeed;
@@ -61,15 +59,15 @@ public class Gun : MonoBehaviour
         // Destroy(trail.gameObject, 3f);
         GameManager.Resource.Destroy(trail.gameObject);
 
-        yield return null;
+        // yield return null;
 
-        if (!trail.IsValid())
-        {
-            Debug.Log("트레일이 없다.");
-        }
-        else
-        {
-            Debug.Log("트레일이 있다.");
-        }
+        // if (!trail.IsValid())
+        // {
+        //     Debug.Log("트레일이 없다.");
+        // }
+        // else
+        // {
+        //     Debug.Log("트레일이 있다.");
+        // }
     }
 }
