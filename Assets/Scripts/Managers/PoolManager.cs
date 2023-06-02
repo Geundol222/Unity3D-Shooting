@@ -6,39 +6,28 @@ using UnityEngine.Pool;
 public class PoolManager : MonoBehaviour
 {
     Dictionary<string, ObjectPool<GameObject>> poolDic;
+    Dictionary<string, Transform> poolContainer;
+    Transform poolRoot;
 
     private void Awake()
     {
         poolDic = new Dictionary<string, ObjectPool<GameObject>>();
+        poolContainer = new Dictionary<string, Transform>();
+        poolRoot = new GameObject("PoolRoot").transform;
     }
 
-    //public GameObject Get(GameObject prefab, Vector3 position, Quaternion rotation)
-    //{
-    //    if (!poolDic.ContainsKey(prefab.name))
-    //        CreatPool(prefab.name, prefab);
-
-    //    ObjectPool<GameObject> pool = poolDic[prefab.name];
-    //    GameObject obj = pool.Get();
-    //    obj.transform.position = position;
-    //    obj.transform.rotation = rotation;
-    //    return obj;
-    //}
-
-
-    // 오브젝트 풀링의 일반화
-    // 이렇게 일반화 하는 것은 박싱 언박싱이 너무 빈번하게 일어날 수 있으므로 완전히 올바른 방식은 아니다.
-    // 이해를 돕기 위한것
-    public T Get<T>(T original, Vector3 position, Quaternion rotation) where T : Object
+    public T Get<T>(T original, Vector3 position, Quaternion rotation, Transform parent) where T : Object
     {
         if (original is GameObject)
         {
             GameObject prefab = original as GameObject;
+            string key = prefab.name;
 
-            if (!poolDic.ContainsKey(prefab.name))
-                CreatePool(prefab.name, prefab);
+            if (!poolDic.ContainsKey(key))
+                CreatePool(key, prefab);
 
-            ObjectPool<GameObject> pool = poolDic[prefab.name];
-            GameObject obj = pool.Get();
+            GameObject obj = poolDic[key].Get();
+            obj.transform.parent = parent;
             obj.transform.position = position;
             obj.transform.rotation = rotation;
             return obj as T;
@@ -52,6 +41,7 @@ public class PoolManager : MonoBehaviour
                 CreatePool(key, component.gameObject);
 
             GameObject obj = poolDic[key].Get();
+            obj.transform.parent = parent;
             obj.transform.position = position;
             obj.transform.rotation = rotation;
             return obj.GetComponent<T>();
@@ -62,46 +52,109 @@ public class PoolManager : MonoBehaviour
         }
     }
 
-    public T Get<T>(T original) where T : Object
+    public T Get<T>(T original, Vector3 position, Quaternion rotation) where T : Object
     {
-        return Get(original, Vector3.zero, Quaternion.identity);
+        return Get<T>(original, position, rotation, null);
     }
 
-    public bool Release(GameObject obj)
+    public T Get<T>(T original, Transform parent) where T : Object
     {
-        if (!poolDic.ContainsKey(obj.name))
-            return false;
+        return Get<T>(original, Vector3.zero, Quaternion.identity, parent);
+    }
 
-        ObjectPool<GameObject> pool = poolDic[obj.name];
-        pool.Release(obj);
-        return true;
+    public T Get<T>(T original) where T : Object
+    {
+        return Get<T>(original, Vector3.zero, Quaternion.identity, null);
+    }
+
+    public bool Release<T>(T instance) where T : Object
+    {
+        if (instance is GameObject)
+        {
+            GameObject go = instance as GameObject;
+            string key = go.name;
+
+            if (!poolDic.ContainsKey(key))
+                return false;
+
+            poolDic[key].Release(go);
+            return true;
+        }
+        else if (instance is Component)
+        {
+            Component component = instance as Component;
+            string key = component.gameObject.name;
+
+            if (!poolDic.ContainsKey(key))
+                return false;
+
+            poolDic[key].Release(component.gameObject);
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public bool IsContain<T>(T original) where T : Object
+    {
+        if (original is GameObject)
+        {
+            GameObject prefab = original as GameObject;
+            string key = prefab.name;
+
+            if (poolDic.ContainsKey(key))
+                return true;
+            else
+                return false;
+
+        }
+        else if (original is Component)
+        {
+            Component component = original as Component;
+            string key = component.gameObject.name;
+
+            if (poolDic.ContainsKey(key))
+                return true;
+            else
+                return false;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     private void CreatePool(string key, GameObject prefab)
     {
+        GameObject root = new GameObject();
+        root.gameObject.name = $"{key}Container";
+        root.transform.parent = poolRoot;
+        poolContainer.Add(key, root.transform);
+
         ObjectPool<GameObject> pool = new ObjectPool<GameObject>(
-            createFunc : () =>
+            createFunc: () =>
             {
                 GameObject obj = Instantiate(prefab);
-                obj.name = key;
+                obj.gameObject.name = key;
                 return obj;
             },
-            actionOnGet : (GameObject obj) =>
+            actionOnGet: (GameObject obj) =>
             {
-                obj.SetActive(true);
-                obj.transform.SetParent(null);
+                obj.gameObject.SetActive(true);
+                obj.transform.parent = null;
             },
-            actionOnRelease : (GameObject obj) =>
+            actionOnRelease: (GameObject obj) =>
             {
-                obj.SetActive(false);
-                obj.transform.SetParent(transform);
+                obj.gameObject.SetActive(false);
+                obj.transform.parent = poolContainer[key];
             },
-            actionOnDestroy : (GameObject obj) =>
+            actionOnDestroy: (GameObject obj) =>
             {
                 Destroy(obj);
             }
             );
-
         poolDic.Add(key, pool);
     }
 }

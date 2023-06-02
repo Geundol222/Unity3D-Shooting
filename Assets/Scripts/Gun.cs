@@ -21,7 +21,7 @@ public class Gun : MonoBehaviour
         {
             IHittable hittable = hit.transform.GetComponent<IHittable>();
             // ParticleSystem effect = Instantiate(hitEffect, hit.point, Quaternion.LookRotation(hit.normal));
-            ParticleSystem effect = GameManager.Pool.Get(hitEffect, hit.point, Quaternion.LookRotation(hit.normal));
+            ParticleSystem effect = GameManager.Resource.Instantiate(hitEffect, hit.point, Quaternion.LookRotation(hit.normal), true);
             effect.transform.parent = hit.transform;
             StartCoroutine(ReleaseRoutine(effect));
 
@@ -38,13 +38,13 @@ public class Gun : MonoBehaviour
     IEnumerator ReleaseRoutine(ParticleSystem effect)
     {
         yield return new WaitForSeconds(3f);
-        GameManager.Pool.Release(effect.gameObject);
+        GameManager.Resource.Destroy(effect.gameObject);
     }
 
     IEnumerator TrailRoutine(Vector3 startPoint, Vector3 endPoint)
     {
         // TrailRenderer trail = Instantiate(bulletTrail, startPoint, Quaternion.identity);
-        TrailRenderer trail = GameManager.Pool.Get(bulletTrail, startPoint, Quaternion.identity);
+        TrailRenderer trail = GameManager.Resource.Instantiate(bulletTrail, startPoint, Quaternion.identity, true);
         trail.Clear();
 
         float totalTime = Vector2.Distance(startPoint, endPoint) / bulletSpeed;
@@ -59,7 +59,7 @@ public class Gun : MonoBehaviour
         }
 
         // Destroy(trail.gameObject, 3f);
-        GameManager.Pool.Release(trail.gameObject);
+        GameManager.Resource.Destroy(trail.gameObject);
 
         yield return null;
 
