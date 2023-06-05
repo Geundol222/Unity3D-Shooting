@@ -64,26 +64,26 @@ namespace HomeWork0602
             return Instantiate<T>(path, Vector3.zero, Quaternion.identity, null, pooling);
         }
 
-        public void Destroy(GameObject go)
+        public void Destroy(GameObject obj)
         {
-            if (GameManager.Pool.IsContain(go))
-                GameManager.Pool.Release(go);
+            if (GameManager.Pool.IsContain(obj))
+                GameManager.Pool.Release(obj);
             else
-                GameObject.Destroy(go);
+                GameObject.Destroy(obj);
         }
 
-        public void Destroy(GameObject go, float delay)
+        public void Destroy(GameObject obj, float delay)
         {
-            if (GameManager.Pool.IsContain(go))
-                StartCoroutine(DelayReleaseRoutine(go, delay));
+            if (GameManager.Pool.IsContain(obj))
+                StartCoroutine(DelayReleaseRoutine(obj, delay));
             else
-                GameObject.Destroy(go, delay);
+                GameObject.Destroy(obj, delay);
         }
 
-        IEnumerator DelayReleaseRoutine(GameObject go, float delay)
+        IEnumerator DelayReleaseRoutine(GameObject obj, float delay)
         {
             yield return new WaitForSeconds(delay);
-            GameManager.Pool.Release(go);
+            GameManager.Pool.Release(obj);
         }
 
         public void Destroy(Component component, float delay = 0f)
