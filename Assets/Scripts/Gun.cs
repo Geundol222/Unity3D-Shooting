@@ -21,7 +21,7 @@ public class Gun : MonoBehaviour
             // ParticleSystem effect = Instantiate(hitEffect, hit.point, Quaternion.LookRotation(hit.normal));
             ParticleSystem effect = GameManager.Resource.Instantiate<ParticleSystem>("Prefabs/HitEffect", hit.point, Quaternion.LookRotation(hit.normal), true);
             effect.transform.parent = hit.transform;
-            StartCoroutine(ReleaseRoutine(effect));
+            GameManager.Resource.Destroy(effect.gameObject, 3f);
 
             StartCoroutine(TrailRoutine(muzzleEffect.transform.position, hit.point));
 
@@ -31,12 +31,6 @@ public class Gun : MonoBehaviour
         {
             StartCoroutine(TrailRoutine(muzzleEffect.transform.position, Camera.main.transform.forward * maxDistance));
         }
-    }
-
-    IEnumerator ReleaseRoutine(ParticleSystem effect)
-    {
-        yield return new WaitForSeconds(3f);
-        GameManager.Resource.Destroy(effect.gameObject);
     }
 
     IEnumerator TrailRoutine(Vector3 startPoint, Vector3 endPoint)
